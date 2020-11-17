@@ -13,6 +13,7 @@ void main() async {
         scaffoldBackgroundColor: Color(0xff17171a),
         accentColor: Colors.white,
       ),
+      debugShowCheckedModeBanner: false,
       home: Wrapper(),
     ),
   );

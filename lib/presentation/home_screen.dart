@@ -1,13 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tasks_app/models/project.dart';
+import 'package:tasks_app/models/task.dart';
 import 'package:tasks_app/services/auth.dart';
 import 'package:tasks_app/widgets/project_card.dart';
+import 'package:tasks_app/widgets/task_card.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
+
+List<Task> tasks = [
+  Task(
+    title: "Take the coat to dry cleaning",
+    isCompleted: false,
+  )
+];
 
 List<Project> projects = [
   Project(
@@ -83,6 +92,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: 10),
             _projectsRow(),
+            SizedBox(height: 20),
+            Text(
+              "Tasks",
+              style: TextStyle(fontSize: 24),
+            ),
+            SizedBox(height: 10),
+            _tasksColumn()
           ],
         ),
       ),
@@ -99,7 +115,7 @@ Widget _projectsRow() {
       itemBuilder: (context, index) {
         Project _project = projects[index];
         return Container(
-          padding: EdgeInsets.symmetric(horizontal: 10),
+          padding: EdgeInsets.only(right: 10),
           child: ProjectCard(
             category: _project.category,
             title: _project.title,
@@ -110,5 +126,17 @@ Widget _projectsRow() {
       },
       itemCount: projects.length,
     ),
+  );
+}
+
+Widget _tasksColumn() {
+  return ListView.builder(
+    shrinkWrap: true,
+    itemBuilder: (context, index) {
+      return TaskCard(
+        task: tasks[index],
+      );
+    },
+    itemCount: tasks.length,
   );
 }
