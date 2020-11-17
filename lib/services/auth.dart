@@ -1,8 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
+final FirebaseFirestore firestore = FirebaseFirestore.instance;
+final mainCollection = 'tasks';
+final tasksCollection = 'tasks';
+final projectsCollection = 'projects';
 
 Future<String> signInWithGoogle() async {
   final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
@@ -24,8 +29,19 @@ Future<String> signInWithGoogle() async {
     final User currentUser = auth.currentUser;
     assert(user.uid == currentUser.uid);
 
-    print('signInWithGoogle succeeded: $user');
-
+    print('signInWithGoogle succeeded: ${user.displayName}');
+    firestore
+        .collection(mainCollection)
+        .doc(user.uid)
+        .set({"Name": user.displayName});
+    firestore
+        .collection(mainCollection)
+        .doc(user.uid)
+        .collection(tasksCollection);
+    firestore
+        .collection(mainCollection)
+        .doc(user.uid)
+        .collection(projectsCollection);
     return '$user';
   }
 
