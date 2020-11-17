@@ -8,6 +8,11 @@ void main() async {
   runApp(
     MaterialApp(
       title: 'Tasks App',
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: Color(0xff17171a),
+        accentColor: Colors.white,
+      ),
       home: Wrapper(),
     ),
   );
