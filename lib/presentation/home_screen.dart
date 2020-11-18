@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tasks_app/models/project.dart';
 import 'package:tasks_app/models/task.dart';
+import 'package:tasks_app/presentation/modify_task.dart';
 import 'package:tasks_app/services/auth.dart';
 import 'package:tasks_app/presentation/widgets/project_card.dart';
 import 'package:tasks_app/presentation/widgets/task_card.dart';
@@ -45,14 +46,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   User get user => widget.user;
 
-  getTasks() async {
-    var a = await db.getTasks(user.uid);
-    print(a);
-  }
-
   @override
   void initState() {
-//    getTasks();
     super.initState();
   }
 
@@ -82,6 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       appBar: AppBar(
+        elevation: 0,
         title: Center(child: Text("Tasks")),
         actions: <Widget>[
           Padding(
@@ -102,6 +98,15 @@ class _HomeScreenState extends State<HomeScreen> {
           size: 35,
           color: Colors.white,
         ),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ModifyTaskScreen(
+              isModify: false,
+              user: user,
+            ),
+          ),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: Container(
@@ -121,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(fontSize: 24),
             ),
             SizedBox(height: 10),
-            _tasksColumn(user.uid)
+            _tasksColumn(user)
           ],
         ),
       ),
@@ -152,10 +157,10 @@ Widget _projectsRow() {
   );
 }
 
-Widget _tasksColumn(String uid) {
+Widget _tasksColumn(User user) {
   DBService db = DBService();
   return StreamBuilder<List<Task>>(
-      stream: db.getTasks(uid),
+      stream: db.getTasks(user.uid),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting)
           return Center(child: CircularProgressIndicator());
@@ -169,6 +174,7 @@ Widget _tasksColumn(String uid) {
                   padding: EdgeInsets.only(bottom: 10),
                   child: TaskCard(
                     task: tasks[index],
+                    user: user,
                   ),
                 );
               },

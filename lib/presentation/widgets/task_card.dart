@@ -1,17 +1,21 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tasks_app/models/task.dart';
+import 'package:tasks_app/services/db_service.dart';
 
 class TaskCard extends StatefulWidget {
   final Task task;
-
-  TaskCard({this.task});
+  final User user;
+  TaskCard({this.task, this.user});
 
   @override
   _TaskCardState createState() => _TaskCardState();
 }
 
 class _TaskCardState extends State<TaskCard> {
+  DBService db = DBService();
+  User get user => widget.user;
   Task get task => widget.task;
 
   @override
@@ -34,10 +38,12 @@ class _TaskCardState extends State<TaskCard> {
               Spacer(),
               Checkbox(
                 value: task.isCompleted,
-                onChanged: (value) {
+                onChanged: (value) async {
                   setState(() {
                     task.isCompleted = value;
                   });
+                  await Future.delayed(Duration(seconds: 3));
+                  if (task.isCompleted) db.finishTask(user.uid, task.title);
                 },
               )
             ],

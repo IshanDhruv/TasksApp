@@ -7,7 +7,25 @@ class DBService {
   final tasksCollection = 'tasks';
   final projectsCollection = 'projects';
 
-  createTask(String uid, String title) {}
+  createTask(String uid, String title) {
+    var obj = [
+      {"title": title, "isCompleted": false}
+    ];
+    firestore
+        .collection(mainCollection)
+        .doc(uid)
+        .update({"tasks": FieldValue.arrayUnion(obj)});
+  }
+
+  finishTask(String uid, String title) {
+    var obj = [
+      {"title": title, "isCompleted": false}
+    ];
+    firestore
+        .collection(mainCollection)
+        .doc(uid)
+        .update({"tasks": FieldValue.arrayRemove(obj)});
+  }
 
   getTasks(String uid) {
     firestore.settings = Settings(persistenceEnabled: false);
@@ -33,9 +51,6 @@ class DBService {
     } catch (e) {
       print(e);
     }
-    var b = snapshot.data();
-    print(b);
-//    print(tasks.first.title);
     return tasks;
   }
 }

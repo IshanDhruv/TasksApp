@@ -10,6 +10,7 @@ void main() async {
       title: 'Tasks App',
       theme: ThemeData(
         brightness: Brightness.dark,
+        primaryColor: Color(0xff1e1e23),
         scaffoldBackgroundColor: Color(0xff17171a),
         accentColor: Colors.white,
       ),
