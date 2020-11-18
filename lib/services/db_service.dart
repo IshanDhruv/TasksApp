@@ -7,9 +7,9 @@ class DBService {
   final tasksCollection = 'tasks';
   final projectsCollection = 'projects';
 
-  createTask(String uid, String title) {
+  createTask(String uid, String title, DateTime date) {
     var obj = [
-      {"title": title, "isCompleted": false}
+      {"title": title, "isCompleted": false, "time": Timestamp.fromDate(date)}
     ];
     firestore
         .collection(mainCollection)
@@ -17,9 +17,9 @@ class DBService {
         .update({"tasks": FieldValue.arrayUnion(obj)});
   }
 
-  finishTask(String uid, String title) {
+  finishTask(String uid, Task task) {
     var obj = [
-      {"title": title, "isCompleted": false}
+      {"title": task.title, "isCompleted": false, "time": task.time}
     ];
     firestore
         .collection(mainCollection)
@@ -37,16 +37,14 @@ class DBService {
   }
 
   List<Task> _tasksFromSnapshot(DocumentSnapshot snapshot) {
-    List<Task> tasks = [
-      Task(
-        title: "Take the coat to dry cleaning",
-        isCompleted: false,
-      )
-    ];
+    List<Task> tasks = [];
     try {
       print(snapshot.metadata.isFromCache ? "Cached" : "Not Cached");
       snapshot.data()['tasks'].forEach((task) {
-        tasks.add(Task(title: task['title'], isCompleted: task['isCompleted']));
+        tasks.add(Task(
+            title: task['title'],
+            isCompleted: task['isCompleted'],
+            time: task['time'].toDate()));
       });
     } catch (e) {
       print(e);

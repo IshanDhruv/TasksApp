@@ -20,35 +20,42 @@ class _TaskCardState extends State<TaskCard> {
 
   @override
   Widget build(BuildContext context) {
+    Color _color = Colors.blue;
+    if (task.time.day == DateTime.now().day) _color = Colors.pinkAccent;
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: EdgeInsets.all(5),
-        color: Color(0xff222228),
-        child: Container(
-          padding: EdgeInsets.only(left: 10),
-          child: Row(
-            children: [
-              AutoSizeText(
-                task.title,
-                maxLines: 2,
-                minFontSize: 18,
-                maxFontSize: 36,
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(5),
+            color: Color(0xff222228),
+            child: Container(
+              padding: EdgeInsets.only(left: 10),
+              child: Row(
+                children: [
+                  AutoSizeText(
+                    task.title,
+                    maxLines: 2,
+                    minFontSize: 18,
+                    maxFontSize: 36,
+                  ),
+                  Spacer(),
+                  Checkbox(
+                    value: task.isCompleted,
+                    onChanged: (value) async {
+                      setState(() {
+                        task.isCompleted = value;
+                      });
+                      await Future.delayed(Duration(seconds: 3));
+                      if (task.isCompleted) db.finishTask(user.uid, task);
+                    },
+                  )
+                ],
               ),
-              Spacer(),
-              Checkbox(
-                value: task.isCompleted,
-                onChanged: (value) async {
-                  setState(() {
-                    task.isCompleted = value;
-                  });
-                  await Future.delayed(Duration(seconds: 3));
-                  if (task.isCompleted) db.finishTask(user.uid, task.title);
-                },
-              )
-            ],
+            ),
           ),
-        ),
+          Container(color: _color, height: 4)
+        ],
       ),
     );
   }

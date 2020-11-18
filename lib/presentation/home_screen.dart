@@ -109,25 +109,27 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: Container(
-        padding: EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Projects",
-              style: TextStyle(fontSize: 24),
-            ),
-            SizedBox(height: 10),
-            _projectsRow(),
-            SizedBox(height: 20),
-            Text(
-              "Tasks",
-              style: TextStyle(fontSize: 24),
-            ),
-            SizedBox(height: 10),
-            _tasksColumn(user)
-          ],
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.all(18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Projects",
+                style: TextStyle(fontSize: 24),
+              ),
+              SizedBox(height: 10),
+              _projectsRow(),
+              SizedBox(height: 20),
+              Text(
+                "Tasks",
+                style: TextStyle(fontSize: 24),
+              ),
+              SizedBox(height: 10),
+              _tasksColumn(user)
+            ],
+          ),
         ),
       ),
     );
@@ -171,7 +173,7 @@ Widget _tasksColumn(User user) {
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 return Padding(
-                  padding: EdgeInsets.only(bottom: 10),
+                  padding: EdgeInsets.only(bottom: 20),
                   child: TaskCard(
                     task: tasks[index],
                     user: user,
