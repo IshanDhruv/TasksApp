@@ -1,12 +1,20 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tasks_app/models/project.dart';
 import 'package:tasks_app/models/task.dart';
 import 'package:tasks_app/services/auth.dart';
-import 'package:tasks_app/widgets/project_card.dart';
-import 'package:tasks_app/widgets/task_card.dart';
+import 'package:tasks_app/presentation/widgets/project_card.dart';
+import 'package:tasks_app/presentation/widgets/task_card.dart';
+import 'package:tasks_app/services/db_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeScreen extends StatefulWidget {
+  final User user;
+
+  HomeScreen({this.user});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -33,6 +41,21 @@ List<Project> projects = [
 ];
 
 class _HomeScreenState extends State<HomeScreen> {
+  DBService db = DBService();
+
+  User get user => widget.user;
+
+  getTasks() async {
+    var a = await db.getTasks(user.uid);
+    print(a);
+  }
+
+  @override
+  void initState() {
+//    getTasks();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(fontSize: 24),
             ),
             SizedBox(height: 10),
-            _tasksColumn()
+            _tasksColumn(user.uid)
           ],
         ),
       ),
@@ -129,14 +152,39 @@ Widget _projectsRow() {
   );
 }
 
-Widget _tasksColumn() {
-  return ListView.builder(
-    shrinkWrap: true,
-    itemBuilder: (context, index) {
-      return TaskCard(
-        task: tasks[index],
-      );
-    },
-    itemCount: tasks.length,
-  );
+Widget _tasksColumn(String uid) {
+  DBService db = DBService();
+  return StreamBuilder<List<Task>>(
+      stream: db.getTasks(uid),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting)
+          return Center(child: CircularProgressIndicator());
+        else if (snapshot.connectionState == ConnectionState.active) {
+          if (snapshot.hasData) {
+            tasks = snapshot.data;
+            return ListView.builder(
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: TaskCard(
+                    task: tasks[index],
+                  ),
+                );
+              },
+              itemCount: tasks.length,
+            );
+          } else
+            return Text(
+              "No tasks yet.",
+              style: TextStyle(color: Colors.white),
+            );
+        } else {
+          print(snapshot.connectionState);
+          return Text(
+            "Something went wrong",
+            style: TextStyle(color: Colors.white),
+          );
+        }
+      });
 }

@@ -20,7 +20,9 @@ class _WrapperState extends State<Wrapper> {
           if (user == null) {
             return SignInScreen();
           }
-          return HomeScreen();
+          return HomeScreen(
+            user: user,
+          );
         } else {
           return Scaffold(
             body: Center(

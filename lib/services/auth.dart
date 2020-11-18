@@ -33,15 +33,15 @@ Future<String> signInWithGoogle() async {
     firestore
         .collection(mainCollection)
         .doc(user.uid)
-        .set({"Name": user.displayName});
-    firestore
-        .collection(mainCollection)
-        .doc(user.uid)
-        .collection(tasksCollection);
-    firestore
-        .collection(mainCollection)
-        .doc(user.uid)
-        .collection(projectsCollection);
+        .update({"Name": user.displayName});
+//    firestore
+//        .collection(mainCollection)
+//        .doc(user.uid)
+//        .collection(tasksCollection);
+//    firestore
+//        .collection(mainCollection)
+//        .doc(user.uid)
+//        .collection(projectsCollection);
     return '$user';
   }
 
