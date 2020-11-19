@@ -29,6 +29,7 @@ dependencies:
   auto_size_text:
   cloud_firestore:
   flutter_datetime_picker: ^1.4.0
+  intl:
 
 
   # The following adds the Cupertino Icons font to your application.

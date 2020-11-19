@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:tasks_app/models/task.dart';
 import 'package:tasks_app/services/db_service.dart';
 
@@ -112,8 +114,10 @@ class _ModifyTaskScreenState extends State<ModifyTaskScreen> {
                       ),
                       controller: _descController,
                     ),
+//                    SizedBox(height: 20),
+//                    _dateRow(context),
                     SizedBox(height: 20),
-                    _dateRow(context),
+                    _dateWidget(context)
                   ],
                 ),
               ),
@@ -128,12 +132,12 @@ class _ModifyTaskScreenState extends State<ModifyTaskScreen> {
 Widget _dateRow(context) {
   return Container(
     child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         FlatButton(
           height: 40,
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10), side: BorderSide()),
+              borderRadius: BorderRadius.circular(7), side: BorderSide()),
           color: Colors.pinkAccent,
           child: Text("Today"),
           onPressed: () async {
@@ -149,7 +153,7 @@ Widget _dateRow(context) {
         FlatButton(
           height: 40,
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10), side: BorderSide()),
+              borderRadius: BorderRadius.circular(7), side: BorderSide()),
           color: Colors.deepPurpleAccent,
           child: Text("Tomorrow"),
           onPressed: () async {
@@ -164,7 +168,7 @@ Widget _dateRow(context) {
         FlatButton(
           height: 40,
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10), side: BorderSide()),
+              borderRadius: BorderRadius.circular(7), side: BorderSide()),
           color: Colors.indigoAccent,
           child: Text("Pick time"),
           onPressed: () async {
@@ -180,6 +184,33 @@ Widget _dateRow(context) {
             print(_date);
           },
         )
+      ],
+    ),
+  );
+}
+
+Widget _dateWidget(context) {
+  return Container(
+    padding: EdgeInsets.all(15),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: Colors.white),
+    ),
+    width: double.infinity,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Date",
+          style: TextStyle(fontSize: 30),
+        ),
+        SizedBox(height: 10),
+        Text(
+          DateFormat.jm().add_yMMMMEEEEd().format(_date),
+          style: TextStyle(fontSize: 16),
+        ),
+        SizedBox(height: 20),
+        _dateRow(context)
       ],
     ),
   );
