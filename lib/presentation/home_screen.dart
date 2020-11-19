@@ -160,15 +160,16 @@ Widget _projectsRow() {
 }
 
 Widget _tasksColumn(User user) {
+  List tasks = [];
   DBService db = DBService();
-  return StreamBuilder<List<Task>>(
+  return StreamBuilder(
       stream: db.getTasks(user.uid),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting)
           return Center(child: CircularProgressIndicator());
         else if (snapshot.connectionState == ConnectionState.active) {
           if (snapshot.hasData) {
-            tasks = snapshot.data;
+            tasks = snapshot.data.documents.map(db.tasksFromSnapshot).toList();
             return ListView.builder(
               shrinkWrap: true,
               itemBuilder: (context, index) {

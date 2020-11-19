@@ -1,12 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tasks_app/models/task.dart';
 import 'package:tasks_app/services/db_service.dart';
 
 class ModifyTaskScreen extends StatefulWidget {
   final bool isModify;
   final User user;
+  final Task task;
 
-  ModifyTaskScreen({@required this.isModify, @required this.user});
+  ModifyTaskScreen({@required this.isModify, @required this.user, this.task});
 
   @override
   _ModifyTaskScreenState createState() => _ModifyTaskScreenState();
@@ -19,10 +21,21 @@ class _ModifyTaskScreenState extends State<ModifyTaskScreen> {
   DBService db = DBService();
 
   bool get isModify => widget.isModify;
+  Task task = Task();
 
   User get user => widget.user;
   final _formKey = GlobalKey<FormState>();
   TextEditingController _titleController = TextEditingController();
+
+  @override
+  void initState() {
+    if (isModify == true) {
+      task = widget.task;
+      _titleController.text = task.title;
+    }
+    ;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +49,13 @@ class _ModifyTaskScreenState extends State<ModifyTaskScreen> {
             child: GestureDetector(
               child: Tooltip(child: Icon(Icons.done), message: "Create"),
               onTap: () {
-                db.createTask(user.uid, _titleController.text, _date);
+                task.title = _titleController.text;
+                task.time = _date;
+                if (isModify == false)
+                  db.createTask(user.uid, task);
+                else {
+                  db.modifyTask(user.uid, task);
+                }
                 Navigator.pop(context);
               },
             ),

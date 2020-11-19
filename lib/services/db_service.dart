@@ -6,49 +6,66 @@ class DBService {
   final mainCollection = 'tasks';
   final tasksCollection = 'tasks';
   final projectsCollection = 'projects';
-
-  createTask(String uid, String title, DateTime date) {
-    var obj = [
-      {"title": title, "isCompleted": false, "time": Timestamp.fromDate(date)}
-    ];
-    firestore
-        .collection(mainCollection)
-        .doc(uid)
-        .update({"tasks": FieldValue.arrayUnion(obj)});
-  }
-
-  finishTask(String uid, Task task) {
-    var obj = [
-      {"title": task.title, "isCompleted": false, "time": task.time}
-    ];
-    firestore
-        .collection(mainCollection)
-        .doc(uid)
-        .update({"tasks": FieldValue.arrayRemove(obj)});
-  }
+  List<Task> tasks = [];
 
   getTasks(String uid) {
     firestore.settings = Settings(persistenceEnabled: false);
     return firestore
         .collection(mainCollection)
         .doc(uid)
-        .snapshots(includeMetadataChanges: true)
-        .map(_tasksFromSnapshot);
+        .collection(tasksCollection)
+        .snapshots();
   }
 
-  List<Task> _tasksFromSnapshot(DocumentSnapshot snapshot) {
-    List<Task> tasks = [];
+  Task tasksFromSnapshot(DocumentSnapshot snapshot) {
     try {
       print(snapshot.metadata.isFromCache ? "Cached" : "Not Cached");
-      snapshot.data()['tasks'].forEach((task) {
-        tasks.add(Task(
-            title: task['title'],
-            isCompleted: task['isCompleted'],
-            time: task['time'].toDate()));
-      });
+      print(snapshot.data());
+      Task task = Task(
+          id: snapshot.id,
+          title: snapshot['title'],
+          isCompleted: snapshot['isCompleted'],
+          time: snapshot['time'].toDate());
+      return task;
     } catch (e) {
       print(e);
     }
-    return tasks;
+  }
+
+  createTask(String uid, Task task) {
+    var obj = {
+      "title": task.title,
+      "isCompleted": false,
+      "time": Timestamp.fromDate(task.time)
+    };
+    firestore
+        .collection(mainCollection)
+        .doc(uid)
+        .collection(tasksCollection)
+        .doc()
+        .set(obj);
+  }
+
+  modifyTask(String uid, Task task) {
+    var obj = {
+      "title": task.title,
+      "isCompleted": false,
+      "time": Timestamp.fromDate(task.time)
+    };
+    firestore
+        .collection(mainCollection)
+        .doc(uid)
+        .collection(tasksCollection)
+        .doc(task.id)
+        .update(obj);
+  }
+
+  finishTask(String uid, Task task) {
+    firestore
+        .collection(mainCollection)
+        .doc(uid)
+        .collection(tasksCollection)
+        .doc(task.id)
+        .delete();
   }
 }

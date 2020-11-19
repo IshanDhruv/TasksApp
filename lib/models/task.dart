@@ -1,7 +1,8 @@
 class Task {
+  String id;
   String title;
   DateTime time;
   bool isCompleted;
 
-  Task({this.title, this.isCompleted, this.time});
+  Task({this.id, this.title, this.isCompleted, this.time});
 }
