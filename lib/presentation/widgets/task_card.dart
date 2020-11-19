@@ -26,6 +26,8 @@ class _TaskCardState extends State<TaskCard> {
   Widget build(BuildContext context) {
     Color _color = Colors.blue;
     if (task.time.day == DateTime.now().day) _color = Colors.pinkAccent;
+    if (task.time.day == DateTime.now().day + 1)
+      _color = Colors.deepPurpleAccent;
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: GestureDetector(

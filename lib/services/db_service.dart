@@ -20,10 +20,10 @@ class DBService {
   Task tasksFromSnapshot(DocumentSnapshot snapshot) {
     try {
       print(snapshot.metadata.isFromCache ? "Cached" : "Not Cached");
-      print(snapshot.data());
       Task task = Task(
           id: snapshot.id,
           title: snapshot['title'],
+          description: snapshot['description'],
           isCompleted: snapshot['isCompleted'],
           time: snapshot['time'].toDate());
       return task;
@@ -35,6 +35,7 @@ class DBService {
   createTask(String uid, Task task) {
     var obj = {
       "title": task.title,
+      "description": task.description,
       "isCompleted": false,
       "time": Timestamp.fromDate(task.time)
     };
@@ -49,6 +50,7 @@ class DBService {
   modifyTask(String uid, Task task) {
     var obj = {
       "title": task.title,
+      "description": task.description,
       "isCompleted": false,
       "time": Timestamp.fromDate(task.time)
     };
