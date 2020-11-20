@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tasks_app/models/task.dart';
 
-class DBService {
+class TaskService {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final mainCollection = 'tasks';
   final tasksCollection = 'tasks';
   final projectsCollection = 'projects';
-  List<Task> tasks = [];
 
   getTasks(String uid) {
     firestore.settings = Settings(persistenceEnabled: false);
@@ -17,7 +16,7 @@ class DBService {
         .snapshots();
   }
 
-  Task tasksFromSnapshot(DocumentSnapshot snapshot) {
+  Task taskFromSnapshot(DocumentSnapshot snapshot) {
     try {
       print(snapshot.metadata.isFromCache ? "Cached" : "Not Cached");
       Task task = Task(

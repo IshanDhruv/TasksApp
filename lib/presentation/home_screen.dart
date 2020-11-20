@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tasks_app/models/project.dart';
@@ -8,8 +6,9 @@ import 'package:tasks_app/presentation/modify_task.dart';
 import 'package:tasks_app/services/auth.dart';
 import 'package:tasks_app/presentation/widgets/project_card.dart';
 import 'package:tasks_app/presentation/widgets/task_card.dart';
-import 'package:tasks_app/services/db_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tasks_app/services/project_service.dart';
+import 'package:tasks_app/services/task_service.dart';
 
 class HomeScreen extends StatefulWidget {
   final User user;
@@ -31,25 +30,18 @@ List<Project> projects = [
   Project(
       category: "Meetings",
       title: "Amanda at Ruth's",
-      day: "Today",
+      time: DateTime.now(),
       completed: 75),
   Project(
     category: "trip",
     title: "Holidays in Norway",
-    day: "Sat",
+    time: DateTime.now(),
     completed: 40,
   )
 ];
 
 class _HomeScreenState extends State<HomeScreen> {
-  DBService db = DBService();
-
   User get user => widget.user;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(fontSize: 24),
               ),
               SizedBox(height: 10),
-              _projectsRow(),
+              _projectsRow(user),
               SizedBox(height: 20),
               Text(
                 "Tasks",
@@ -136,40 +128,66 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-Widget _projectsRow() {
-  return Container(
-    height: 200,
-    child: ListView.builder(
-      shrinkWrap: true,
-      scrollDirection: Axis.horizontal,
-      itemBuilder: (context, index) {
-        Project _project = projects[index];
-        return Container(
-          padding: EdgeInsets.only(right: 10),
-          child: ProjectCard(
-            category: _project.category,
-            title: _project.title,
-            day: _project.day,
-            completed: _project.completed,
-          ),
-        );
-      },
-      itemCount: projects.length,
-    ),
-  );
-}
-
-Widget _tasksColumn(User user) {
-  List tasks = [];
-  DBService db = DBService();
+Widget _projectsRow(User user) {
+  List projects = [];
+  ProjectService projectDB = ProjectService();
   return StreamBuilder(
-      stream: db.getTasks(user.uid),
+      stream: projectDB.getProjects(user.uid),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting)
           return Center(child: CircularProgressIndicator());
         else if (snapshot.connectionState == ConnectionState.active) {
           if (snapshot.hasData) {
-            tasks = snapshot.data.documents.map(db.tasksFromSnapshot).toList();
+            projects = snapshot.data.documents
+                .map(projectDB.projectFromSnapshot)
+                .toList();
+            return Container(
+              height: 200,
+              child: ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  Project _project = projects[index];
+                  return Container(
+                    padding: EdgeInsets.only(right: 10),
+                    child: ProjectCard(
+                      category: _project.category,
+                      title: _project.title,
+                      day: _project.time,
+                      completed: _project.completed,
+                    ),
+                  );
+                },
+                itemCount: projects.length,
+              ),
+            );
+          } else
+            return Text(
+              "No projects yet.",
+              style: TextStyle(color: Colors.white),
+            );
+        } else {
+          print(snapshot.connectionState);
+          return Text(
+            "Something went wrong",
+            style: TextStyle(color: Colors.white),
+          );
+        }
+      });
+}
+
+Widget _tasksColumn(User user) {
+  List tasks = [];
+  TaskService taskDB = TaskService();
+  return StreamBuilder(
+      stream: taskDB.getTasks(user.uid),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting)
+          return Center(child: CircularProgressIndicator());
+        else if (snapshot.connectionState == ConnectionState.active) {
+          if (snapshot.hasData) {
+            tasks =
+                snapshot.data.documents.map(taskDB.taskFromSnapshot).toList();
             return ListView.builder(
               shrinkWrap: true,
               itemBuilder: (context, index) {

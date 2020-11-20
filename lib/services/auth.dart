@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:tasks_app/models/task.dart';
+import 'package:tasks_app/services/task_service.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -23,6 +25,7 @@ Future<String> signInWithGoogle() async {
   final User user = authResult.user;
 
   if (user != null) {
+    TaskService taskDB = TaskService();
     assert(!user.isAnonymous);
     assert(await user.getIdToken() != null);
 
@@ -34,14 +37,13 @@ Future<String> signInWithGoogle() async {
         .collection(mainCollection)
         .doc(user.uid)
         .update({"Name": user.displayName});
-//    firestore
-//        .collection(mainCollection)
-//        .doc(user.uid)
-//        .collection(tasksCollection);
-//    firestore
-//        .collection(mainCollection)
-//        .doc(user.uid)
-//        .collection(projectsCollection);
+    taskDB.createTask(
+        user.uid,
+        Task(
+            title: "Check this off!",
+            time: DateTime.now(),
+            isCompleted: false,
+            description: "This is your first task. Mark it done!"));
     return '$user';
   }
 

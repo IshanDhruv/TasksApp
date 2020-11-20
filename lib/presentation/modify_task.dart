@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tasks_app/models/task.dart';
-import 'package:tasks_app/services/db_service.dart';
+import 'package:tasks_app/services/task_service.dart';
 
 class ModifyTaskScreen extends StatefulWidget {
   final bool isModify;
@@ -16,12 +16,10 @@ class ModifyTaskScreen extends StatefulWidget {
   _ModifyTaskScreenState createState() => _ModifyTaskScreenState();
 }
 
-DateTime _date = DateTime.now();
-TimeOfDay _time = TimeOfDay.now();
-
 class _ModifyTaskScreenState extends State<ModifyTaskScreen> {
-  DBService db = DBService();
-
+  TaskService taskDB = TaskService();
+  DateTime _date;
+  TimeOfDay _time;
   bool get isModify => widget.isModify;
   Task task = Task();
 
@@ -34,10 +32,14 @@ class _ModifyTaskScreenState extends State<ModifyTaskScreen> {
   void initState() {
     if (isModify == true) {
       task = widget.task;
+      _date = task.time;
+      _time = TimeOfDay.fromDateTime(task.time);
       _titleController.text = task.title;
       _descController.text = task.description;
+    } else {
+      _date = DateTime.now();
+      _time = TimeOfDay.now();
     }
-    ;
     super.initState();
   }
 
@@ -57,9 +59,9 @@ class _ModifyTaskScreenState extends State<ModifyTaskScreen> {
                 task.description = _descController.text;
                 task.time = _date;
                 if (isModify == false)
-                  db.createTask(user.uid, task);
+                  taskDB.createTask(user.uid, task);
                 else {
-                  db.modifyTask(user.uid, task);
+                  taskDB.modifyTask(user.uid, task);
                 }
                 Navigator.pop(context);
               },
@@ -114,8 +116,6 @@ class _ModifyTaskScreenState extends State<ModifyTaskScreen> {
                       ),
                       controller: _descController,
                     ),
-//                    SizedBox(height: 20),
-//                    _dateRow(context),
                     SizedBox(height: 20),
                     _dateWidget(context)
                   ],
@@ -127,91 +127,97 @@ class _ModifyTaskScreenState extends State<ModifyTaskScreen> {
       ),
     );
   }
-}
 
-Widget _dateRow(context) {
-  return Container(
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        FlatButton(
-          height: 40,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(7), side: BorderSide()),
-          color: Colors.pinkAccent,
-          child: Text("Today"),
-          onPressed: () async {
-            _date = DateTime.now();
-            _time = await showTimePicker(
-                context: context, initialTime: TimeOfDay.now());
-            _date = DateTime(
-                _date.year, _date.month, _date.day, _time.hour, _time.minute);
-            print(_date);
-          },
-        ),
-//        SizedBox(width: 30),
-        FlatButton(
-          height: 40,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(7), side: BorderSide()),
-          color: Colors.deepPurpleAccent,
-          child: Text("Tomorrow"),
-          onPressed: () async {
-            _date = DateTime.now();
-            _time = await showTimePicker(
-                context: context, initialTime: TimeOfDay.now());
-            _date = DateTime(_date.year, _date.month, _date.day + 1, _time.hour,
-                _time.minute);
-            print(_date);
-          },
-        ),
-        FlatButton(
-          height: 40,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(7), side: BorderSide()),
-          color: Colors.indigoAccent,
-          child: Text("Pick time"),
-          onPressed: () async {
-            _date = await showDatePicker(
-                context: context,
-                initialDate: _date,
-                firstDate: DateTime.now(),
-                lastDate: DateTime(2025));
-            _time = await showTimePicker(
-                context: context, initialTime: TimeOfDay.now());
-            _date = DateTime(
-                _date.year, _date.month, _date.day, _time.hour, _time.minute);
-            print(_date);
-          },
-        )
-      ],
-    ),
-  );
-}
+  Widget _dateRow(context) {
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          FlatButton(
+            height: 40,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(7), side: BorderSide()),
+            color: Colors.pinkAccent,
+            child: Text("Today"),
+            onPressed: () async {
+              var a =
+                  await showTimePicker(context: context, initialTime: _time);
+              setState(() {
+                _date = DateTime.now();
+                _time = a;
+                _date = DateTime(_date.year, _date.month, _date.day, _time.hour,
+                    _time.minute);
+              });
+            },
+          ),
+          FlatButton(
+            height: 40,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(7), side: BorderSide()),
+            color: Colors.deepPurpleAccent,
+            child: Text("Tomorrow"),
+            onPressed: () async {
+              var a =
+                  await showTimePicker(context: context, initialTime: _time);
+              setState(() {
+                _date = DateTime.now();
+                _time = a;
+                _date = DateTime(_date.year, _date.month, _date.day + 1,
+                    _time.hour, _time.minute);
+              });
+            },
+          ),
+          FlatButton(
+            height: 40,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(7), side: BorderSide()),
+            color: Colors.indigoAccent,
+            child: Text("Pick time"),
+            onPressed: () async {
+              var a = await showDatePicker(
+                  context: context,
+                  initialDate: _date,
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime(2025));
+              var b = await showTimePicker(
+                  context: context, initialTime: TimeOfDay.now());
+              setState(() {
+                _date = a;
+                _time = b;
+                _date = DateTime(_date.year, _date.month, _date.day, _time.hour,
+                    _time.minute);
+              });
+            },
+          )
+        ],
+      ),
+    );
+  }
 
-Widget _dateWidget(context) {
-  return Container(
-    padding: EdgeInsets.all(15),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(10),
-      border: Border.all(color: Colors.white),
-    ),
-    width: double.infinity,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Date",
-          style: TextStyle(fontSize: 30),
-        ),
-        SizedBox(height: 10),
-        Text(
-          DateFormat.jm().add_yMMMMEEEEd().format(_date),
-          style: TextStyle(fontSize: 16),
-        ),
-        SizedBox(height: 20),
-        _dateRow(context)
-      ],
-    ),
-  );
+  Widget _dateWidget(context) {
+    return Container(
+      padding: EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.white),
+      ),
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Date",
+            style: TextStyle(fontSize: 30),
+          ),
+          SizedBox(height: 10),
+          Text(
+            DateFormat.jm().add_yMMMMEEEEd().format(_date),
+            style: TextStyle(fontSize: 16),
+          ),
+          SizedBox(height: 20),
+          _dateRow(context)
+        ],
+      ),
+    );
+  }
 }

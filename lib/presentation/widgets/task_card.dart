@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tasks_app/models/task.dart';
 import 'package:tasks_app/presentation/modify_task.dart';
-import 'package:tasks_app/services/db_service.dart';
+import 'package:tasks_app/services/task_service.dart';
 
 class TaskCard extends StatefulWidget {
   final Task task;
@@ -16,7 +16,7 @@ class TaskCard extends StatefulWidget {
 }
 
 class _TaskCardState extends State<TaskCard> {
-  DBService db = DBService();
+  TaskService taskDB = TaskService();
 
   User get user => widget.user;
 
@@ -66,7 +66,7 @@ class _TaskCardState extends State<TaskCard> {
                           task.isCompleted = value;
                         });
                         await Future.delayed(Duration(seconds: 3));
-                        if (task.isCompleted) db.finishTask(user.uid, task);
+                        if (task.isCompleted) taskDB.finishTask(user.uid, task);
                       },
                     )
                   ],

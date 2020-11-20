@@ -1,10 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ProjectCard extends StatelessWidget {
   final String category;
   final String title;
-  final String day;
+  final DateTime day;
   final int completed;
 
   ProjectCard({this.category, this.title, this.day, this.completed});
@@ -34,7 +35,7 @@ class ProjectCard extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text(day),
+            Text(DateFormat.EEEE().format(day)),
           ],
         ),
       ),

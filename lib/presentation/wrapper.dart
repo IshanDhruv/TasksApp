@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tasks_app/presentation/auth/sign_in_screen.dart';
 import 'package:tasks_app/presentation/home_screen.dart';
-import 'package:tasks_app/presentation/sign_in_screen.dart';
 import 'package:tasks_app/services/auth.dart';
 
 class Wrapper extends StatefulWidget {
