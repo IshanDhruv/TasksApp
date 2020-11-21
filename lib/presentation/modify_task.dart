@@ -20,6 +20,7 @@ class _ModifyTaskScreenState extends State<ModifyTaskScreen> {
   TaskService taskDB = TaskService();
   DateTime _date;
   TimeOfDay _time;
+
   bool get isModify => widget.isModify;
   Task task = Task();
 
@@ -143,10 +144,12 @@ class _ModifyTaskScreenState extends State<ModifyTaskScreen> {
               var a =
                   await showTimePicker(context: context, initialTime: _time);
               setState(() {
-                _date = DateTime.now();
-                _time = a;
-                _date = DateTime(_date.year, _date.month, _date.day, _time.hour,
-                    _time.minute);
+                if (a != null) {
+                  _date = DateTime.now();
+                  _time = a;
+                  _date = DateTime(_date.year, _date.month, _date.day,
+                      _time.hour, _time.minute);
+                }
               });
             },
           ),
@@ -160,10 +163,12 @@ class _ModifyTaskScreenState extends State<ModifyTaskScreen> {
               var a =
                   await showTimePicker(context: context, initialTime: _time);
               setState(() {
-                _date = DateTime.now();
-                _time = a;
-                _date = DateTime(_date.year, _date.month, _date.day + 1,
-                    _time.hour, _time.minute);
+                if (a != null) {
+                  _date = DateTime.now();
+                  _time = a;
+                  _date = DateTime(_date.year, _date.month, _date.day + 1,
+                      _time.hour, _time.minute);
+                }
               });
             },
           ),
@@ -182,10 +187,12 @@ class _ModifyTaskScreenState extends State<ModifyTaskScreen> {
               var b = await showTimePicker(
                   context: context, initialTime: TimeOfDay.now());
               setState(() {
-                _date = a;
-                _time = b;
-                _date = DateTime(_date.year, _date.month, _date.day, _time.hour,
-                    _time.minute);
+                if (a != null && b != null) {
+                  _date = a;
+                  _time = b;
+                  _date = DateTime(_date.year, _date.month, _date.day,
+                      _time.hour, _time.minute);
+                }
               });
             },
           )

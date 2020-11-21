@@ -17,9 +17,7 @@ class TaskCard extends StatefulWidget {
 
 class _TaskCardState extends State<TaskCard> {
   TaskService taskDB = TaskService();
-
   User get user => widget.user;
-
   Task get task => widget.task;
 
   @override
@@ -28,6 +26,8 @@ class _TaskCardState extends State<TaskCard> {
     if (task.time.day == DateTime.now().day) _color = Colors.pinkAccent;
     if (task.time.day == DateTime.now().day + 1)
       _color = Colors.deepPurpleAccent;
+    if (task.time.isBefore(DateTime.now())) _color = Colors.red;
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: GestureDetector(

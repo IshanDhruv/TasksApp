@@ -139,7 +139,7 @@ Widget _projectsRow(User user) {
         else if (snapshot.connectionState == ConnectionState.active) {
           if (snapshot.hasData) {
             projects = snapshot.data.documents
-                .map(projectDB.projectFromSnapshot)
+                .map<Project>(projectDB.projectFromSnapshot)
                 .toList();
             return Container(
               height: 200,
@@ -177,7 +177,7 @@ Widget _projectsRow(User user) {
 }
 
 Widget _tasksColumn(User user) {
-  List tasks = [];
+  List<Task> tasks = [];
   TaskService taskDB = TaskService();
   return StreamBuilder(
       stream: taskDB.getTasks(user.uid),
@@ -186,8 +186,10 @@ Widget _tasksColumn(User user) {
           return Center(child: CircularProgressIndicator());
         else if (snapshot.connectionState == ConnectionState.active) {
           if (snapshot.hasData) {
-            tasks =
-                snapshot.data.documents.map(taskDB.taskFromSnapshot).toList();
+            tasks = snapshot.data.documents
+                .map<Task>(taskDB.taskFromSnapshot)
+                .toList();
+            tasks.sort((a, b) => b.time.compareTo(a.time));
             return ListView.builder(
               shrinkWrap: true,
               itemBuilder: (context, index) {
