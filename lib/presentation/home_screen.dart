@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:tasks_app/models/project.dart';
 import 'package:tasks_app/models/task.dart';
 import 'package:tasks_app/presentation/modify_task.dart';
+import 'package:tasks_app/presentation/widgets/modify_project.dart';
 import 'package:tasks_app/services/auth.dart';
 import 'package:tasks_app/presentation/widgets/project_card.dart';
 import 'package:tasks_app/presentation/widgets/task_card.dart';
@@ -83,24 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blue,
-        child: Icon(
-          Icons.add,
-          size: 35,
-          color: Colors.white,
-        ),
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ModifyTaskScreen(
-              isModify: false,
-              user: user,
-            ),
-          ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: buildSpeedDial(),
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.all(18),
@@ -124,6 +109,51 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  SpeedDial buildSpeedDial() {
+    return SpeedDial(
+      animatedIcon: AnimatedIcons.menu_close,
+      animatedIconTheme: IconThemeData(size: 22.0),
+      child: Icon(
+        Icons.add,
+        color: Colors.pinkAccent,
+      ),
+//      visible: dialVisible,
+      curve: Curves.bounceIn,
+      children: [
+        SpeedDialChild(
+          child: Icon(Icons.edit, color: Colors.white),
+          backgroundColor: Colors.blue,
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  ModifyTaskScreen(user: user, isModify: false),
+            ),
+          ),
+          label: 'New task',
+          labelStyle: TextStyle(fontWeight: FontWeight.w500),
+          labelBackgroundColor: Colors.blue,
+        ),
+        SpeedDialChild(
+          child: Icon(Icons.assignment_rounded, color: Colors.white),
+          backgroundColor: Colors.green,
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ModifyProjectScreen(
+                user: user,
+                isModify: false,
+              ),
+            ),
+          ),
+          label: 'New project',
+          labelStyle: TextStyle(fontWeight: FontWeight.w500),
+          labelBackgroundColor: Colors.green,
+        ),
+      ],
     );
   }
 }
@@ -189,7 +219,7 @@ Widget _tasksColumn(User user) {
             tasks = snapshot.data.documents
                 .map<Task>(taskDB.taskFromSnapshot)
                 .toList();
-            tasks.sort((a, b) => b.time.compareTo(a.time));
+            tasks.sort((a, b) => a.time.compareTo(b.time));
             return ListView.builder(
               shrinkWrap: true,
               itemBuilder: (context, index) {

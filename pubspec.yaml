@@ -30,6 +30,7 @@ dependencies:
   cloud_firestore:
   flutter_datetime_picker: ^1.4.0
   intl:
+  flutter_speed_dial: ^1.2.5
 
 
   # The following adds the Cupertino Icons font to your application.
