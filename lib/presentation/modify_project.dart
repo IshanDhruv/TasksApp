@@ -75,6 +75,17 @@ class _ModifyProjectScreenState extends State<ModifyProjectScreen> {
           )
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(
+          Icons.delete,
+          color: Colors.white,
+        ),
+        backgroundColor: Colors.red,
+        onPressed: () {
+          projectDB.deleteProject(user.uid, project);
+          Navigator.pop(context);
+        },
+      ),
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.all(15),

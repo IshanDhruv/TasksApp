@@ -63,4 +63,13 @@ class ProjectService {
         .doc(project.id)
         .update(obj);
   }
+
+  deleteProject(String uid, Project project) {
+    firestore
+        .collection(mainCollection)
+        .doc(uid)
+        .collection(projectsCollection)
+        .doc(project.id)
+        .delete();
+  }
 }
