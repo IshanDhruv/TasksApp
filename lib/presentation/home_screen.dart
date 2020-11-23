@@ -4,13 +4,14 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:tasks_app/models/project.dart';
 import 'package:tasks_app/models/task.dart';
 import 'package:tasks_app/presentation/modify_task.dart';
-import 'package:tasks_app/presentation/widgets/modify_project.dart';
 import 'package:tasks_app/services/auth.dart';
 import 'package:tasks_app/presentation/widgets/project_card.dart';
 import 'package:tasks_app/presentation/widgets/task_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tasks_app/services/project_service.dart';
 import 'package:tasks_app/services/task_service.dart';
+
+import 'modify_project.dart';
 
 class HomeScreen extends StatefulWidget {
   final User user;
@@ -181,10 +182,8 @@ Widget _projectsRow(User user) {
                   return Container(
                     padding: EdgeInsets.only(right: 10),
                     child: ProjectCard(
-                      category: _project.category,
-                      title: _project.title,
-                      day: _project.time,
-                      completed: _project.completed,
+                      project: _project,
+                      user: user,
                     ),
                   );
                 },

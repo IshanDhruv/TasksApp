@@ -1,42 +1,57 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tasks_app/models/project.dart';
+import 'package:tasks_app/presentation/modify_project.dart';
 
 class ProjectCard extends StatelessWidget {
-  final String category;
-  final String title;
-  final DateTime day;
-  final int completed;
+  final Project project;
+  final User user;
 
-  ProjectCard({this.category, this.title, this.day, this.completed});
+  ProjectCard({this.project, this.user});
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: EdgeInsets.all(10),
-        width: 150,
-        color: Color(0xff222228),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            AutoSizeText(
-              category.toUpperCase(),
-              maxLines: 2,
-              style: TextStyle(color: Color(0xff57585c), fontSize: 10),
-            ),
-            AutoSizeText(
-              title,
-              maxLines: 2,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ModifyProjectScreen(
+                isModify: true,
+                user: user,
+                project: project,
               ),
             ),
-            Text(DateFormat.EEEE().format(day)),
-          ],
+          );
+        },
+        child: Container(
+          padding: EdgeInsets.all(10),
+          width: 150,
+          color: Color(0xff222228),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              AutoSizeText(
+                project.category != null ? project.category.toUpperCase() : "",
+                maxLines: 2,
+                style: TextStyle(color: Color(0xff57585c), fontSize: 10),
+              ),
+              AutoSizeText(
+                project.title,
+                maxLines: 2,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(DateFormat.EEEE().format(project.time)),
+            ],
+          ),
         ),
       ),
     );

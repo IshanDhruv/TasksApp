@@ -30,4 +30,36 @@ class ProjectService {
       print(e);
     }
   }
+
+  createProject(String uid, Project project) {
+    var obj = {
+      "title": project.title,
+      "description": project.description,
+      "completed": project.completed,
+      "category": project.category,
+      "time": Timestamp.fromDate(project.time)
+    };
+    firestore
+        .collection(mainCollection)
+        .doc(uid)
+        .collection(projectsCollection)
+        .doc()
+        .set(obj);
+  }
+
+  modifyProject(String uid, Project project) {
+    var obj = {
+      "title": project.title,
+      "description": project.description,
+      "completed": project.completed,
+      "category": project.category,
+      "time": Timestamp.fromDate(project.time)
+    };
+    firestore
+        .collection(mainCollection)
+        .doc(uid)
+        .collection(projectsCollection)
+        .doc(project.id)
+        .update(obj);
+  }
 }
