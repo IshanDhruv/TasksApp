@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tasks_app/models/category.dart';
 import 'package:tasks_app/models/project.dart';
+import 'package:tasks_app/services/category_service.dart';
 import 'package:tasks_app/services/project_service.dart';
 
 class ModifyProjectScreen extends StatefulWidget {
@@ -17,16 +19,19 @@ class ModifyProjectScreen extends StatefulWidget {
 
 class _ModifyProjectScreenState extends State<ModifyProjectScreen> {
   ProjectService projectDB = ProjectService();
+  CategoryService categoryDB = CategoryService();
   DateTime _date;
   TimeOfDay _time;
 
   bool get isModify => widget.isModify;
   Project project = Project();
+  Category _selectedCategory = Category();
 
   User get user => widget.user;
   final _formKey = GlobalKey<FormState>();
   TextEditingController _titleController = TextEditingController();
   TextEditingController _descController = TextEditingController();
+  TextEditingController _categoryController = TextEditingController();
 
   @override
   void initState() {
@@ -58,6 +63,7 @@ class _ModifyProjectScreenState extends State<ModifyProjectScreen> {
                 project.title = _titleController.text;
                 project.description = _descController.text;
                 project.time = _date;
+                project.category = _selectedCategory.title;
                 if (isModify == false)
                   projectDB.createProject(user.uid, project);
                 else {
@@ -117,7 +123,9 @@ class _ModifyProjectScreenState extends State<ModifyProjectScreen> {
                       controller: _descController,
                     ),
                     SizedBox(height: 20),
-                    _dateWidget(context)
+                    _dateWidget(),
+                    SizedBox(height: 20),
+                    categoryDropdown()
                   ],
                 ),
               ),
@@ -128,7 +136,7 @@ class _ModifyProjectScreenState extends State<ModifyProjectScreen> {
     );
   }
 
-  Widget _dateRow(context) {
+  Widget _dateRow() {
     return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -200,12 +208,12 @@ class _ModifyProjectScreenState extends State<ModifyProjectScreen> {
     );
   }
 
-  Widget _dateWidget(context) {
+  Widget _dateWidget() {
     return Container(
       padding: EdgeInsets.all(15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.white),
+        border: Border.all(color: Colors.white30),
       ),
       width: double.infinity,
       child: Column(
@@ -221,9 +229,102 @@ class _ModifyProjectScreenState extends State<ModifyProjectScreen> {
             style: TextStyle(fontSize: 16),
           ),
           SizedBox(height: 20),
-          _dateRow(context)
+          _dateRow()
         ],
       ),
     );
+  }
+
+  Widget categoryDropdown() {
+    return Container(
+      padding: EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.white30),
+      ),
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Category",
+            style: TextStyle(fontSize: 30),
+          ),
+          SizedBox(height: 10),
+          StreamBuilder(
+            stream: categoryDB.getCategories(user.uid),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting)
+                return CircularProgressIndicator();
+              if (snapshot.data != null) {
+                List<Category> _categories = snapshot.data.documents
+                    .map<Category>(categoryDB.categoryFromSnapshot)
+                    .toList();
+                _selectedCategory.title = _categories[0].title;
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    DropdownButton(
+                      value: _selectedCategory.title ?? _categories[0].title,
+                      items: _categories
+                          .map((e) => DropdownMenuItem(
+                              value: e.title,
+                              child: Text(e.title.toUpperCase())))
+                          .toList(),
+                      onChanged: (val) {
+                        setState(() {
+                          _selectedCategory.title = val;
+                        });
+                      },
+                    ),
+                    FlatButton(
+                      height: 40,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(7),
+                          side: BorderSide()),
+                      color: Colors.pinkAccent,
+                      child: Text("New Category"),
+                      onPressed: () async {
+                        _displayDialog();
+                      },
+                    ),
+                  ],
+                );
+              } else
+                return Text(
+                  "Something went wrong",
+                  style: TextStyle(color: Colors.white),
+                );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  _displayDialog() async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Make a new category'),
+            content: TextField(
+              controller: _categoryController,
+              textInputAction: TextInputAction.go,
+              decoration: InputDecoration(hintText: "Category name"),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: new Text('Create'),
+                onPressed: () {
+                  _selectedCategory = Category(title: _categoryController.text);
+                  categoryDB.createCategory(user.uid, _selectedCategory);
+                  project.category = _categoryController.text;
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
   }
 }

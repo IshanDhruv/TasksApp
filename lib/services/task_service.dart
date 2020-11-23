@@ -6,6 +6,7 @@ class TaskService {
   final mainCollection = 'tasks';
   final tasksCollection = 'tasks';
   final projectsCollection = 'projects';
+  final categoryCollection = 'categories';
 
   getTasks(String uid) {
     firestore.settings = Settings(persistenceEnabled: false);
@@ -18,7 +19,7 @@ class TaskService {
 
   Task taskFromSnapshot(DocumentSnapshot snapshot) {
     try {
-      print(snapshot.metadata.isFromCache ? "Cached" : "Not Cached");
+//      print(snapshot.metadata.isFromCache ? "Cached" : "Not Cached");
       Task task = Task(
           id: snapshot.id,
           title: snapshot['title'],
