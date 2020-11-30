@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tasks_app/models/project.dart';
 import 'package:tasks_app/models/task.dart';
 
 class TaskService {
@@ -21,11 +22,13 @@ class TaskService {
     try {
 //      print(snapshot.metadata.isFromCache ? "Cached" : "Not Cached");
       Task task = Task(
-          id: snapshot.id,
-          title: snapshot['title'],
-          description: snapshot['description'],
-          isCompleted: snapshot['isCompleted'],
-          time: snapshot['time'].toDate());
+        id: snapshot.id,
+        title: snapshot['title'],
+        description: snapshot['description'],
+        isCompleted: snapshot['isCompleted'],
+        time: snapshot['time'].toDate(),
+        project: Project.fromJson(snapshot['project']),
+      );
       return task;
     } catch (e) {
       print(e);
@@ -37,6 +40,7 @@ class TaskService {
       "title": task.title,
       "description": task.description,
       "isCompleted": false,
+      "project": {"title": task.project.title, "id": task.project.id},
       "time": Timestamp.fromDate(task.time)
     };
     firestore
@@ -52,6 +56,7 @@ class TaskService {
       "title": task.title,
       "description": task.description,
       "isCompleted": false,
+      "project": {"title": task.project.title, "id": task.project.id},
       "time": Timestamp.fromDate(task.time)
     };
     firestore

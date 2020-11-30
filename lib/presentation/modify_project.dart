@@ -41,6 +41,7 @@ class _ModifyProjectScreenState extends State<ModifyProjectScreen> {
       _time = TimeOfDay.fromDateTime(project.time);
       _titleController.text = project.title;
       _descController.text = project.description;
+      _selectedCategory.title = project.category;
     } else {
       _date = DateTime.now();
       _time = TimeOfDay.now();
@@ -271,7 +272,6 @@ class _ModifyProjectScreenState extends State<ModifyProjectScreen> {
                 List<Category> _categories = snapshot.data.documents
                     .map<Category>(categoryDB.categoryFromSnapshot)
                     .toList();
-                _selectedCategory.title = _categories[0].title;
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

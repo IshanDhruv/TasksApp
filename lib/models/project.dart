@@ -13,4 +13,9 @@ class Project {
       this.description,
       this.time,
       this.completed});
+
+  Project.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    title = json['title'];
+  }
 }

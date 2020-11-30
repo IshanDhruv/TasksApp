@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:tasks_app/models/project.dart';
 import 'package:tasks_app/models/task.dart';
+import 'package:tasks_app/services/project_service.dart';
 import 'package:tasks_app/services/task_service.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
@@ -11,7 +13,7 @@ final mainCollection = 'tasks';
 final tasksCollection = 'tasks';
 final projectsCollection = 'projects';
 
-Future<String> signInWithGoogle() async {
+signInWithGoogle() async {
   final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
   final GoogleSignInAuthentication googleSignInAuthentication =
       await googleSignInAccount.authentication;
@@ -26,6 +28,7 @@ Future<String> signInWithGoogle() async {
 
   if (user != null) {
     TaskService taskDB = TaskService();
+    ProjectService projectDB = ProjectService();
     assert(!user.isAnonymous);
     assert(await user.getIdToken() != null);
 
@@ -37,6 +40,12 @@ Future<String> signInWithGoogle() async {
         .collection(mainCollection)
         .doc(user.uid)
         .update({"Name": user.displayName});
+    projectDB.createProject(
+        user.uid,
+        Project(
+            title: "Welcome",
+            time: DateTime.now(),
+            description: "Complete this project"));
     taskDB.createTask(
         user.uid,
         Task(
@@ -44,7 +53,7 @@ Future<String> signInWithGoogle() async {
             time: DateTime.now(),
             isCompleted: false,
             description: "This is your first task. Mark it done!"));
-    return '$user';
+    return user;
   }
 
   return null;
