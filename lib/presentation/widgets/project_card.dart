@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tasks_app/models/project.dart';
-import 'package:tasks_app/presentation/modify_project.dart';
+import 'package:tasks_app/presentation/projects/modify_project.dart';
 
 class ProjectCard extends StatelessWidget {
   final Project project;

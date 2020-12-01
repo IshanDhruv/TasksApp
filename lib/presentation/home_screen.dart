@@ -3,15 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:tasks_app/models/project.dart';
 import 'package:tasks_app/models/task.dart';
-import 'package:tasks_app/presentation/modify_task.dart';
-import 'package:tasks_app/services/auth.dart';
+import 'package:tasks_app/presentation/widgets/drawer.dart';
 import 'package:tasks_app/presentation/widgets/project_card.dart';
 import 'package:tasks_app/presentation/widgets/task_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tasks_app/services/project_service.dart';
 import 'package:tasks_app/services/task_service.dart';
-
-import 'modify_project.dart';
+import 'projects/modify_project.dart';
+import 'tasks/modify_task.dart';
 
 class HomeScreen extends StatefulWidget {
   final User user;
@@ -49,28 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text('Drawer Header'),
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-            ),
-            ListTile(
-              title: Text(
-                'Logout',
-                style: TextStyle(color: Colors.red),
-              ),
-              onTap: () async {
-                signOut();
-              },
-            ),
-          ],
-        ),
-      ),
+      drawer: DrawerWidget(user: user),
       appBar: AppBar(
         elevation: 0,
         title: Center(child: Text("Tasks")),

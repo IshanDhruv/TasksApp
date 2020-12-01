@@ -2,8 +2,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tasks_app/models/task.dart';
-import 'package:tasks_app/presentation/modify_task.dart';
 import 'package:tasks_app/services/task_service.dart';
+import 'package:tasks_app/presentation/tasks/modify_task.dart';
 
 class TaskCard extends StatefulWidget {
   final Task task;
