@@ -23,13 +23,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  firebase_core:
-  firebase_auth:
-  google_sign_in:
-  auto_size_text:
-  cloud_firestore:
+  firebase_core: ^0.5.2+1
+  firebase_auth: ^0.18.3+1
+  google_sign_in: ^4.5.6
+  auto_size_text: ^2.1.0
+  cloud_firestore: ^0.14.3+1
   flutter_datetime_picker: ^1.4.0
-  intl:
+  intl: ^0.16.1
   flutter_speed_dial: ^1.2.5
 
 

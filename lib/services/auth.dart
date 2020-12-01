@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tasks_app/models/project.dart';
 import 'package:tasks_app/models/task.dart';
@@ -36,23 +37,29 @@ signInWithGoogle() async {
     assert(user.uid == currentUser.uid);
 
     print('signInWithGoogle succeeded: ${user.displayName}');
-    firestore
-        .collection(mainCollection)
-        .doc(user.uid)
-        .update({"Name": user.displayName});
-    projectDB.createProject(
-        user.uid,
-        Project(
-            title: "Welcome",
-            time: DateTime.now(),
-            description: "Complete this project"));
-    taskDB.createTask(
-        user.uid,
-        Task(
-            title: "Check this off!",
-            time: DateTime.now(),
-            isCompleted: false,
-            description: "This is your first task. Mark it done!"));
+    final snapshot =
+        await firestore.collection(mainCollection).doc(user.uid).get();
+
+    if (snapshot == null || !snapshot.exists) {
+      firestore
+          .collection(mainCollection)
+          .doc(user.uid)
+          .set({"Name": user.displayName});
+      projectDB.createProject(
+          user.uid,
+          Project(
+              title: "Welcome",
+              time: DateTime.now(),
+              description: "Complete this project"));
+      taskDB.createTask(
+          user.uid,
+          Task(
+              title: "Check this off!",
+              time: DateTime.now(),
+              isCompleted: false,
+              project: Project(title: "Welcome"),
+              description: "This is your first task. Mark it done!"));
+    }
     return user;
   }
 
