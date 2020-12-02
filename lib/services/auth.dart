@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tasks_app/models/project.dart';
 import 'package:tasks_app/models/task.dart';
@@ -57,7 +56,6 @@ signInWithGoogle() async {
               title: "Check this off!",
               time: DateTime.now(),
               isCompleted: false,
-              project: Project(title: "Welcome"),
               description: "This is your first task. Mark it done!"));
     }
     return user;

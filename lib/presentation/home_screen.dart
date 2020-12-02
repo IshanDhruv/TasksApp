@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -6,9 +7,9 @@ import 'package:tasks_app/models/task.dart';
 import 'package:tasks_app/presentation/widgets/drawer.dart';
 import 'package:tasks_app/presentation/widgets/project_card.dart';
 import 'package:tasks_app/presentation/widgets/task_card.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tasks_app/services/project_service.dart';
 import 'package:tasks_app/services/task_service.dart';
+
 import 'projects/modify_project.dart';
 import 'tasks/modify_task.dart';
 
@@ -20,27 +21,6 @@ class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
-
-List<Task> tasks = [
-  Task(
-    title: "Take the coat to dry cleaning",
-    isCompleted: false,
-  )
-];
-
-List<Project> projects = [
-  Project(
-      category: "Meetings",
-      title: "Amanda at Ruth's",
-      time: DateTime.now(),
-      completed: 75),
-  Project(
-    category: "trip",
-    title: "Holidays in Norway",
-    time: DateTime.now(),
-    completed: 40,
-  )
-];
 
 class _HomeScreenState extends State<HomeScreen> {
   User get user => widget.user;

@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tasks_app/models/project.dart';
 import 'package:tasks_app/models/task.dart';
 
 class TaskService {
@@ -27,7 +26,6 @@ class TaskService {
         description: snapshot['description'],
         isCompleted: snapshot['isCompleted'],
         time: snapshot['time'].toDate(),
-        project: Project.fromJson(snapshot['project']),
       );
       return task;
     } catch (e) {
@@ -40,7 +38,6 @@ class TaskService {
       "title": task.title,
       "description": task.description,
       "isCompleted": false,
-      "project": {"title": task.project.title, "id": task.project.id},
       "time": Timestamp.fromDate(task.time)
     };
     firestore
@@ -56,7 +53,6 @@ class TaskService {
       "title": task.title,
       "description": task.description,
       "isCompleted": false,
-      "project": {"title": task.project.title, "id": task.project.id},
       "time": Timestamp.fromDate(task.time)
     };
     firestore

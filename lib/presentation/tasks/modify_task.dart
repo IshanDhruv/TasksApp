@@ -2,9 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:tasks_app/models/project.dart';
 import 'package:tasks_app/models/task.dart';
-import 'package:tasks_app/services/project_service.dart';
 import 'package:tasks_app/services/task_service.dart';
 
 class ModifyTaskScreen extends StatefulWidget {
@@ -20,13 +18,11 @@ class ModifyTaskScreen extends StatefulWidget {
 
 class _ModifyTaskScreenState extends State<ModifyTaskScreen> {
   TaskService taskDB = TaskService();
-  ProjectService projectDB = ProjectService();
   DateTime _date;
   TimeOfDay _time;
 
   bool get isModify => widget.isModify;
   Task task = Task();
-  Project _selectedProject = Project();
 
   User get user => widget.user;
   final _formKey = GlobalKey<FormState>();
@@ -41,8 +37,6 @@ class _ModifyTaskScreenState extends State<ModifyTaskScreen> {
       _time = TimeOfDay.fromDateTime(task.time);
       _titleController.text = task.title;
       _descController.text = task.description;
-      _selectedProject.title = task.project.title;
-      _selectedProject.id = task.project.id;
     } else {
       _date = DateTime.now();
       _time = TimeOfDay.now();
@@ -66,11 +60,8 @@ class _ModifyTaskScreenState extends State<ModifyTaskScreen> {
                 task.description = _descController.text;
                 task.time = _date;
                 if (isModify == false) {
-                  task.project = _selectedProject;
                   taskDB.createTask(user.uid, task);
                 } else {
-                  task.project.id = _selectedProject.id;
-                  task.project.title = _selectedProject.title;
                   taskDB.modifyTask(user.uid, task);
                 }
                 Navigator.pop(context);
@@ -129,7 +120,6 @@ class _ModifyTaskScreenState extends State<ModifyTaskScreen> {
                     SizedBox(height: 20),
                     _dateWidget(context),
                     SizedBox(height: 20),
-                    projectDropdown()
                   ],
                 ),
               ),
@@ -234,75 +224,6 @@ class _ModifyTaskScreenState extends State<ModifyTaskScreen> {
           ),
           SizedBox(height: 20),
           _dateRow(context)
-        ],
-      ),
-    );
-  }
-
-  Widget projectDropdown() {
-    return Container(
-      padding: EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.white30),
-      ),
-      width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Project",
-            style: TextStyle(fontSize: 30),
-          ),
-          SizedBox(height: 10),
-          StreamBuilder(
-            stream: projectDB.getProjects(user.uid),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting)
-                return CircularProgressIndicator();
-              if (snapshot.data != null) {
-                List<Project> _projects = snapshot.data.documents
-                    .map<Project>(projectDB.projectFromSnapshot)
-                    .toList();
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    DropdownButton(
-                      value: _selectedProject.title ?? _projects[0].title,
-                      items: _projects
-                          .map((e) => DropdownMenuItem(
-                              value: e.title, child: Text(e.title)))
-                          .toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          _selectedProject.title = val;
-                          _projects.forEach((element) {
-                            if (element.title == val)
-                              _selectedProject.id = element.id;
-                          });
-                        });
-                      },
-                    ),
-//                    FlatButton(
-//                      height: 40,
-//                      shape: RoundedRectangleBorder(
-//                          borderRadius: BorderRadius.circular(7),
-//                          side: BorderSide()),
-//                      color: Colors.pinkAccent,
-//                      child: Text("New Project"),
-//                      onPressed: () async {
-//                        _displayDialog();
-//                      },
-//                    ),
-                  ],
-                );
-              } else
-                return Text(
-                  "Something went wrong",
-                  style: TextStyle(color: Colors.white),
-                );
-            },
-          ),
         ],
       ),
     );
